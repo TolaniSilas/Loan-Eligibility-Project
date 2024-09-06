@@ -67,7 +67,7 @@
             <div id="loanForm">
                 <h3>Enter Your Details</h3>
                 <!-- Appplicant Information -->
-                <form action="/submit-info" method="GET">
+                <form action="{{ url_for('submit_loan') }}" method="GET">
 
                     <!-- Full Name -->
                     <div class="mb-3">
@@ -130,19 +130,19 @@
                     <!-- Applicant Income -->
                     <div class="mb-3">
                         <label for="applicantIncome" class="form-label">Applicant Income ($)</label>
-                        <input type="number" class="form-control" id="applicantIncome" placeholder="Enter your income" required>
+                        <input type="number" class="form-control" name="applicantIncome" id="applicantIncome" placeholder="Enter your income" required>
                     </div>
         
                     <!-- Coapplicant Income -->
                     <div class="mb-3">
                         <label for="coapplicantIncome" class="form-label">Coapplicant Income ($)</label>
-                        <input type="number" class="form-control" id="coapplicantIncome" placeholder="Enter coapplicant income (if any)">
+                        <input type="number" class="form-control" name="coapplicantIncome" id="coapplicantIncome" placeholder="Enter coapplicant income (if any)">
                     </div>
         
                     <!-- Loan Amount -->
                     <div class="mb-3">
                         <label for="loanAmount" class="form-label">Loan Amount</label>
-                        <input type="number" class="form-control" id="loanAmount" placeholder="Enter desired loan amount" required>
+                        <input type="number" class="form-control" name="loanAmount" id="loanAmount" placeholder="Enter desired loan amount" required>
                     </div>
         
                     <!-- Loan Amount Term -->
@@ -154,7 +154,7 @@
                     <!-- Credit History -->
                     <div class="mb-3">
                         <label for="creditHistory" class="form-label">Credit History</label>
-                        <select class="form-control" id="creditHistory" required>
+                        <select class="form-control" name="creditHistory" id="creditHistory" required>
                             <option value="" disabled selected>Select credit history</option>
                             <option value="1">Yes (Good Credit)</option>
                             <option value="0">No (Bad Credit)</option>
