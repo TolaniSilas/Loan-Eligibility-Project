@@ -7,7 +7,7 @@ from model import LoanModel
 
 app = Flask(__name__)
 
-print(np.__version__)
+
 @app.route('/health', methods=["GET"])
 def health():
     return "<p>Hello! EndPoint is active!</p>"
