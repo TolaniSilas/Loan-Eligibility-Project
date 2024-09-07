@@ -17,7 +17,6 @@ columns = ["Credit_History"]
 
 features = pd.get_dummies(features, columns=columns, prefix=columns, dtype=float)
 
-
 label_encoder = LabelEncoder()
 labels = label_encoder.fit_transform(labels)
 
@@ -42,51 +41,63 @@ X_train_scaled_numerical = pd.DataFrame(X_train_scaled_numerical, columns=numeri
 X_train_scaled = pd.concat([X_train_scaled_numerical, X_train[categorical_columns]], axis=1)
 
 
-# df = pd.DataFrame({"ApplicantIncome": , "CoapplicantIncome": , "LoanAmount":, "Credit_History":})
-
-class LoanModel():
+class LoanEligibilityModel():
     
     # Define the model path.
-    model_path = "loan-model-file/loan_model.pkl"
+    model_path = "loan-model-file/loan_model.pkl"    
 
     # Load the trained model.
     loaded_model = joblib.load(model_path)
-    print("Model loaded successfully.")
+    print("Model loaded successfully!")
     
     
     
     def user_info_processing(self, applicant_income, coapplicant_income, loan_amount, credit_history):
         
-        df = pd.DataFrame({"ApplicantIncome": [applicant_income], "CoapplicantIncome": [coapplicant_income], "LoanAmount": [loan_amount], "Credit_History": [credit_history]})
+        user_df = pd.DataFrame({"ApplicantIncome": [applicant_income], "CoapplicantIncome": [coapplicant_income], "LoanAmount": [loan_amount], "Credit_History": [credit_history]})
 
-        return df
+        if user_df.loc[0, "Credit_History"]== 0.0:
+            user_df["Credit_History_0"] = 1.0
+            user_df["Credit_History_1"] = 0.0
+            
+        elif user_df.loc[0, "Credit_History"] == 1.0:
+            user_df["Credit_History_0"] = 0.0
+            user_df["Credit_History_1"] = 1.0
+            
+        # Drop the Credit_History column.    
+        user_df.drop(["Credit_History"], axis=1, inplace=True)
+        
+        # Fit and transform the numerical columns.
+        user_df_scaled_numerical = scaler.transform(user_df[numerical_columns])
+
+        # Convert the scaled data back to a DataFrame.
+        user_df_scaled_numerical = pd.DataFrame(user_df_scaled_numerical, columns=numerical_columns)
+
+        # Combine the scaled numerical columns with the original categorical columns
+        user_df_scaled = pd.concat([user_df_scaled_numerical, user_df[categorical_columns]], axis=1)
+
+        return user_df_scaled
+    
+    
+    def generate_eligibility(self, applicant_income, coapplicant_income, loan_amount, credit_history):
+        
+        # Get the user preprocessed information.
+        user_preprocessed_info = self.user_info_processing(applicant_income, coapplicant_income, loan_amount, credit_history)
+        
+        # user_preprocessed_info = user_preprocessed_info.to_numpy()
+        
+        prediction = self.loaded_model.predict(user_preprocessed_info)[0]
+
+        prediction_probability = self.loaded_model.predict_proba(user_preprocessed_info)[0]
+        
+        return prediction_probability
         
          
         
-        
+# loan_model = LoanEligibilityModel()
+# print(loan_model.generate_eligibility(3000, 0, 66, 1))        
                              
-    
-    
-    
-    # def generate_eligibility(self, ):
-        
-        
-        
-        
-    #     predictions = self.loaded_model.predict(X_test_scaled)
-
-    #     y_proba = self.loaded_model.predict_proba(X_test_scaled)
-        
-        
-        
-    
-    
-    
-    # def  
-
-
-
-
-
+                             
+                             
 if __name__ == "__main__":
-    LoanModel()
+    LoanEligibilityModel()
