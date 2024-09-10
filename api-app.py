@@ -1,8 +1,6 @@
 from flask import Flask, request, render_template, url_for, jsonify
 import requests
 import numpy as np
-from model import LoanModel
-
 
 
 app = Flask(__name__)
@@ -72,7 +70,7 @@ def submit_loan():
 
      
     
-    return jsonify({"message": f"Receievd name: {name}, email: {email}"})
+    return jsonify({"message": f"Received name: {name}, email: {email}"})
 
 
 

@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd 
 import joblib
-from pydantic import BaseModel
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 
 
+# Read the csv file into a DataFrame.
 loan_df = pd.read_csv("loan-dataset/cleaned-loan-train.csv")
 
 # Get the features and corresponding labels from the dataset.
@@ -90,14 +90,65 @@ class LoanEligibilityModel():
 
         prediction_probability = self.loaded_model.predict_proba(user_preprocessed_info)[0]
         
-        return prediction_probability
+        return prediction, prediction_probability
         
-         
+ 
         
-# loan_model = LoanEligibilityModel()
-# print(loan_model.generate_eligibility(3000, 0, 66, 1))        
+loan_model = LoanEligibilityModel()
+print(loan_model.generate_eligibility(3000, 0, 66, 1))        
                              
                              
                              
+# if __name__ == "__main__":
+#     LoanEligibilityModel()
+
+
+
+
+
+from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, Request
+# from model import LoanEligibilityModel
+
+# Instantiate the FastAPI Class.
+app = FastAPI()
+
+
+# Define the input Data Model.
+class UserData(BaseModel):
+    applicantIncome: float
+    coapplicantIncome: float
+    loanAmount: float
+    creditHistory: float
+
+
+@app.get("/health")
+async def health():
+    
+    return {"Status": "Get Started!"}
+
+        
+@app.post("/eligibility")
+async def loan_eligibility(user_data: UserData):
+    
+    
+    # # Get the user information.
+    # applicantincome = user_data.applicantIncome
+    # coapplicantincome = user_data.coapplicantIncome
+    # loanamount = user_data.loanAmount
+    # credithistory = user_data.creditHistory
+    
+    #loan_model = LoanEligibilityModel()
+    
+    #prediction, prediction_probability = loan_model.generate_eligibility(applicant_income=applicantincome, coapplicant_income=coapplicantincome, loan_amount=loanamount, credit_history=credithistory)
+    
+    return user_data
+    
+        
+
 if __name__ == "__main__":
-    LoanEligibilityModel()
+    
+    import uvicorn
+    print("Starting Model Api Endpoint!")
+    
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)  
