@@ -3,6 +3,10 @@ import pandas as pd
 import joblib
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
+import warnings
+
+# Suppress all warnings
+warnings.filterwarnings("ignore")
 
 
 # Read the csv file into a DataFrame.
@@ -42,6 +46,23 @@ X_train_scaled = pd.concat([X_train_scaled_numerical, X_train[categorical_column
 
 
 class LoanEligibilityModel():
+    """
+    A class to handle the loan eligibility prediction using a pre-trained model.
+
+    Attributes
+    ----------
+    model_path : str
+        The file path where the pre-trained model is stored.
+    loaded_model : sklearn.base.BaseEstimator
+        The pre-trained model loaded from the file path.
+
+    Methods
+    -------
+    generate_eligibility(applicant_income, coapplicant_income, loan_amount, credit_history):
+        Processes the input data and predicts loan eligibility along with the prediction probability.
+    user_info_processing(applicant_income, coapplicant_income, loan_amount, credit_history):
+        Transforms and scales user input data for model prediction.
+    """
     
     # Define the model path.
     model_path = "loan-model-file/loan_model.pkl"    
@@ -53,102 +74,116 @@ class LoanEligibilityModel():
     
     
     def user_info_processing(self, applicant_income, coapplicant_income, loan_amount, credit_history):
-        
-        user_df = pd.DataFrame({"ApplicantIncome": [applicant_income], "CoapplicantIncome": [coapplicant_income], "LoanAmount": [loan_amount], "Credit_History": [credit_history]})
+        """
+        Processes and transforms user information for model prediction.
 
-        if user_df.loc[0, "Credit_History"]== 0.0:
+        Parameters
+        ----------
+        applicant_income : float
+            The income of the primary applicant.
+        coapplicant_income : float
+            The income of the coapplicant.
+        loan_amount : float
+            The amount of the loan applied for.
+        credit_history : float
+            The credit history score of the applicant, which can be 0.0 or 1.0.
+
+        Returns
+        -------
+        pd.DataFrame
+            A DataFrame containing the processed and scaled numerical features along with the
+            transformed categorical features, suitable for model prediction.
+
+        Notes
+        -----
+        - The `Credit_History` column is one-hot encoded into two separate columns:
+        `Credit_History_0` and `Credit_History_1`.
+        - The numerical columns are scaled using a pre-fitted scaler.
+        - The categorical columns are combined with the scaled numerical columns to form the final
+        DataFrame for model input.
+        """
+        
+        # Create a DataFrame with the user input data.
+        user_df = pd.DataFrame({
+            "ApplicantIncome": [applicant_income], 
+            "CoapplicantIncome": [coapplicant_income], 
+            "LoanAmount": [loan_amount], 
+            "Credit_History": [credit_history]
+        })
+
+        # One-hot encode the Credit_History column.
+        if user_df.loc[0, "Credit_History"] == 0.0:
             user_df["Credit_History_0"] = 1.0
             user_df["Credit_History_1"] = 0.0
             
         elif user_df.loc[0, "Credit_History"] == 1.0:
             user_df["Credit_History_0"] = 0.0
             user_df["Credit_History_1"] = 1.0
-            
-        # Drop the Credit_History column.    
+        
+        # Drop the original Credit_History column.
         user_df.drop(["Credit_History"], axis=1, inplace=True)
         
-        # Fit and transform the numerical columns.
+        # Scale the numerical features using the pre-fitted scaler.
         user_df_scaled_numerical = scaler.transform(user_df[numerical_columns])
 
-        # Convert the scaled data back to a DataFrame.
+        # Convert the scaled numerical data back to a DataFrame.
         user_df_scaled_numerical = pd.DataFrame(user_df_scaled_numerical, columns=numerical_columns)
 
-        # Combine the scaled numerical columns with the original categorical columns
+        # Combine the scaled numerical features with the transformed categorical features.
         user_df_scaled = pd.concat([user_df_scaled_numerical, user_df[categorical_columns]], axis=1)
-
+        
+        # Return the processed DataFrame.
         return user_df_scaled
-    
+
     
     def generate_eligibility(self, applicant_income, coapplicant_income, loan_amount, credit_history):
+        """
+        Predicts the eligibility of a loan applicant based on their financial information.
+
+        Parameters
+        ----------
+        applicant_income : float
+            The income of the primary applicant.
+        coapplicant_income : float
+            The income of the coapplicant.
+        loan_amount : float
+            The amount of the loan applied for.
+        credit_history : float
+            The credit history score of the applicant.
+
+        Returns
+        -------
+        tuple
+            A tuple where the first element is the prediction (0 or 1) indicating 
+            whether the applicant is non-eligible (0) or eligible (1), and the second 
+            element is the probability associated with the prediction. If the prediction 
+            is 1, the probability is the likelihood of being eligible. If the prediction 
+            is 0, the probability is the likelihood of being non-eligible, calculated 
+            as `1 - prediction_probability`.
+
+        Notes
+        -----
+        The `prediction_probability` represents the probability of the applicant being 
+        eligible (positive class). For a prediction of 0 (non-eligible), the returned 
+        probability is adjusted to reflect the likelihood of non-eligibility.
+        """
         
-        # Get the user preprocessed information.
+        # Preprocess user information for prediction.
         user_preprocessed_info = self.user_info_processing(applicant_income, coapplicant_income, loan_amount, credit_history)
         
-        # user_preprocessed_info = user_preprocessed_info.to_numpy()
-        
+        # Predict the eligibility of the customer and its corresponding probability. 
         prediction = self.loaded_model.predict(user_preprocessed_info)[0]
-
-        prediction_probability = self.loaded_model.predict_proba(user_preprocessed_info)[0]
+        prediction_probability = self.loaded_model.predict_proba(user_preprocessed_info)[0][1]
         
-        return prediction, prediction_probability
+        if prediction == 1:
+            # If the prediction is 1 (eligible), return the prediction and the probability of being eligible.
+            return prediction, prediction_probability
         
- 
+        elif prediction == 0:
+            # If the prediction is 0 (non-eligible), return the prediction and the probability of being non-eligible.
+            return prediction, 1 - prediction_probability
         
-loan_model = LoanEligibilityModel()
-print(loan_model.generate_eligibility(3000, 0, 66, 1))        
-                             
-                             
-                             
-# if __name__ == "__main__":
-#     LoanEligibilityModel()
-
-
-
-
-
-from pydantic import BaseModel
-from fastapi import FastAPI, HTTPException, Request
-# from model import LoanEligibilityModel
-
-# Instantiate the FastAPI Class.
-app = FastAPI()
-
-
-# Define the input Data Model.
-class UserData(BaseModel):
-    applicantIncome: float
-    coapplicantIncome: float
-    loanAmount: float
-    creditHistory: float
-
-
-@app.get("/health")
-async def health():
-    
-    return {"Status": "Get Started!"}
-
-        
-@app.post("/eligibility")
-async def loan_eligibility(user_data: UserData):
-    
-    
-    # # Get the user information.
-    # applicantincome = user_data.applicantIncome
-    # coapplicantincome = user_data.coapplicantIncome
-    # loanamount = user_data.loanAmount
-    # credithistory = user_data.creditHistory
-    
-    #loan_model = LoanEligibilityModel()
-    
-    #prediction, prediction_probability = loan_model.generate_eligibility(applicant_income=applicantincome, coapplicant_income=coapplicantincome, loan_amount=loanamount, credit_history=credithistory)
-    
-    return user_data
-    
-        
-
+   
+                                                          
 if __name__ == "__main__":
-    
-    import uvicorn
-    print("Starting Model Api Endpoint!")
-    
-    uvicorn.run(app, host="127.0.0.1", port=8000, reload=True)  
+    LoanEligibilityModel()

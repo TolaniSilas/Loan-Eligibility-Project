@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, url_for, jsonify
+from flask import Flask, request, render_template, jsonify
 import requests
 import numpy as np
 
@@ -60,9 +60,6 @@ def submit_loan():
             "credit_history": credit_history,
             # "credit_history_1": credit_history_1
             }
-        loan_model = LoanModel()
-        
-        df = loan_model.user_info_processing(user_data["applicant_income"], user_data["coapplicant_income"], user_data["loan_amount"], user_data["credit_history"])
     
         # # Call the FastAPI Endpoint 
         # model_endpoint = "https//"
