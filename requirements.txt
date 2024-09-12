@@ -9,3 +9,4 @@ joblib==1.4.2
 requests==2.32.3 
 pydantic==2.9.1
 fastapi==0.114.0 
+gunicorn
