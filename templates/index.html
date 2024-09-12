@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="index-style.css">
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     
@@ -37,9 +36,10 @@
     
     <body class="bg-dark text-white">
         <div class="container-md p-3 text-center">
+            <div style="margin-top:50px"></div>
             <div>
-                <h1>Loan Eligibility App</h1>
-                <p>Ease your worry and pay installmentally!</p>
+                <h1 style="color: green; font-size: 2rem;"><strong>Loan Eligibility App</strong></h1>
+                <p>Ease your worries with convenient installment payments!</p>
             </div>
             <!-- Image visible below md -->
             <img class="d-md-none img-fluid w-100 rounded float-start mb-3" alt="loan-eligibility-image" src="https://okcredit-blog-images-prod.storage.googleapis.com/2021/02/eligibility1.jpg">
@@ -52,11 +52,10 @@
         <div>
             <div class="container-md mt-4 text-center">
                 <h3>About the App 🚀</h3>
-                <p><span class="fw-bold" style="color:#0477e3">Dream Housing Finance</span> offers a quick and easy way to apply for home loans. Serving all areas, the app helps users check eligibility, 
+                <p><span class="text-primary" style="color:#0477e3">Dream Housing Finance</span> offers a quick and easy way to apply for home loans. Serving all areas, the app helps users check eligibility, 
                     receive personalized offers, and track their loan process seamlessly.</p>
             </div>
         </div>
-
 
 
         <div class="container-md p-3 text-center">
@@ -65,19 +64,20 @@
         
             <!-- Form that appears after button click -->
             <div id="loanForm">
-                <h3>Enter Your Details</h3>
+                <h3 class="text-primary">We're Here to Help You Secure Your Loan!</h3>
+                <p class="lead">Fill out the form below to get started on your loan application. Your journey to financial ease begins here!</p>
                 <!-- Appplicant Information -->
-                <form action="{{ url_for('/submit_loan') }}" method="POST">
+                <form action="{{ url_for('get_loan_form') }}" method="POST">
 
                     <!-- Full Name -->
                     <div class="mb-3">
-                        <label for="name" class="form-label">Full Name</label>
+                        <label for="name" class="form-label">What's your Full Name?</label>
                         <input type="text" name="name" class="form-control" id="name" placeholder="John Doe" required>
                     </div>
 
                     <!-- Email Address -->
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email address</label>
+                        <label for="email" class="form-label">What's your Email address?</label>
                         <input type="email" name="email" class="form-control" id="email" placeholder="tolanisilas@gmail.com" required>
                     </div>
 
@@ -104,7 +104,7 @@
                     <!-- Dependents -->
                     <div class="mb-3">
                         <label for="dependents" class="form-label">Dependents</label>
-                        <input type="number" class="form-control" id="dependents" placeholder="Number of dependents" required>
+                        <input type="number" class="form-control" id="dependents" placeholder="Number of dependents" min="0" max="7" required>
                     </div>
         
                     <!-- Education -->
@@ -130,34 +130,34 @@
                     <!-- Applicant Income -->
                     <div class="mb-3">
                         <label for="applicantIncome" class="form-label">Applicant Income ($)</label>
-                        <input type="number" class="form-control" name="applicantIncome" id="applicantIncome" placeholder="Enter your income" required>
+                        <input type="number" class="form-control" name="applicantIncome" id="applicantIncome" placeholder="Enter your income" min="0" required>
                     </div>
         
                     <!-- Coapplicant Income -->
                     <div class="mb-3">
                         <label for="coapplicantIncome" class="form-label">Coapplicant Income ($)</label>
-                        <input type="number" class="form-control" name="coapplicantIncome" id="coapplicantIncome" placeholder="Enter coapplicant income (if any)">
+                        <input type="number" class="form-control" name="coapplicantIncome" id="coapplicantIncome" placeholder="Enter coapplicant income (if any)" min="0" required>
                     </div>
         
                     <!-- Loan Amount -->
                     <div class="mb-3">
-                        <label for="loanAmount" class="form-label">Loan Amount</label>
-                        <input type="number" class="form-control" name="loanAmount" id="loanAmount" placeholder="Enter desired loan amount" required>
+                        <label for="loanAmount" class="form-label">Loan Amount ($)</label>
+                        <input type="number" class="form-control" name="loanAmount" id="loanAmount" placeholder="Enter desired loan amount" min="0" max="300" required>
                     </div>
         
                     <!-- Loan Amount Term -->
                     <div class="mb-3">
                         <label for="loanAmountTerm" class="form-label">Loan Amount Term (in Years)</label>
-                        <input type="number" class="form-control" id="loanAmountTerm" placeholder="Enter loan term in months" required>
+                        <input type="number" class="form-control" id="loanAmountTerm" placeholder="Enter loan term in years" min="1" max="30" required>
                     </div>
         
                     <!-- Credit History -->
                     <div class="mb-3">
                         <label for="creditHistory" class="form-label">Credit History</label>
                         <select class="form-control" name="creditHistory" id="creditHistory" required>
-                            <option value="" disabled selected>Select credit history</option>
-                            <option value="1">Yes (Good Credit)</option>
-                            <option value="0">No (Bad Credit)</option>
+                            <option value="" disabled selected>Select credit score</option>
+                            <option value="1">Yes (Good Credit: $670 - $850)</option>
+                            <option value="0">No (Bad Credit: $300 - $669)</option>
                         </select>
                     </div>
         
