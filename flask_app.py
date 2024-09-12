@@ -109,5 +109,5 @@ def eligibility():
 
 if __name__ == '__main__':
     
-    # Run the Flask application with debugging enabled on port 5003 and localhost.
-    app.run(debug=True, port=5003, host='127.0.0.1')
+    # Run the Flask application with debugging disabled (Production Environment)
+    app.run()
