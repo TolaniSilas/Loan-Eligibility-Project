@@ -14,10 +14,10 @@ def health():
     Returns
     -------
     dict
-        A dictionary with a single key "Status" and value "Get Started!".
+        A dictionary with a single key "Status" and value "Service is running!".
     """
     
-    return {"status": "Service is running"}
+    return {"status": "Service is running!"}
 
 
 
