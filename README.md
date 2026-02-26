@@ -79,7 +79,7 @@ Loan-Eligibility-Project/
 
 ## Technology Stack
 
-- **Language**: Python
+- **Language**: Python >= 3.10
 - **Modeling & Data**:
   - `numpy`
   - `pandas`
@@ -303,23 +303,21 @@ Key configuration points:
   - To use a local API instead, update this URL to:
     - `http://127.0.0.1:8000/loan_eligibility` (or another host/port you deploy to).
 
-## Testing and Validation
+## Testing
 
-While there is no dedicated test suite included yet, recommended practices include:
+This project includes automated tests under the `test/` directory:
 
-- **Unit tests**
-  - Test `LoanEligibilityModel.user_info_processing` for a variety of inputs.
-  - Test `LoanEligibilityModel.generate_eligibility` with synthetic/sampled data.
+- **Unit tests** (`test_model.py`) for `LoanEligibilityModel.user_info_processing` and `generate_eligibility`.
+- **API tests** (`test_main_api.py`) for `GET /health` and `POST /loan_eligibility` (valid and invalid payloads).
+- **End-to-end tests** (`test_flask_app_e2e_playwright.py`) using Playwright to fill the web form, submit it, and verify that the `/eligibility` page shows a valid status.
 
-- **API tests**
-  - Test `GET /health` to ensure service availability.
-  - Test `POST /loan_eligibility` with valid and invalid payloads.
+Run the full suite from the project root with:
 
-- **End-to-end tests**
-  - Automate browser-level tests (e.g. with Playwright or Selenium) to:
-    - Fill out the form.
-    - Submit.
-    - Assert that `/eligibility` renders the correct status.
+```bash
+pytest --headed
+```
+
+> **Note:** For the end-to-end Playwright tests to pass, the flask app and fastapi app it depends on, must be running locally.
 
 
 ## Contributing
@@ -327,8 +325,8 @@ While there is no dedicated test suite included yet, recommended practices inclu
 Contributions to improve the model, UI, or infrastructure are welcome. Suggested contribution areas:
 
 - Enhancing feature engineering and model performance.
-- Improving form validation and user experience.
-- Adding automated tests and CI/CD pipelines.
+- Improving user experience.
+- Adding CI/CD pipelines.
 - Extending the API to support additional endpoints (e.g. model explanation, batch scoring).
 
 Before opening a pull request:

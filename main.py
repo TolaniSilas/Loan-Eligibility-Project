@@ -49,12 +49,37 @@ class LoanEligibilityRequest(BaseModel):
     coapplicantIncome: float
     loanAmount: float
     creditHistory: float
+
+
+
+class LoanEligibilityResponse(BaseModel):
+    """
+    Data model for loan eligibility prediction responses.
+
+    Attributes
+    ----------
+    prediction : float
+        The binary loan eligibility prediction where 1.0 indicates eligible
+        and 0.0 indicates non-eligible.
+    probability : float
+        The probability associated with the prediction, expressed as a value
+        between 0.0 and 1.0.
+
+    Notes
+    -----
+    This model validates and documents the structure of responses returned by
+    the loan eligibility endpoint, ensuring a consistent and well-defined API
+    contract for clients that consume this service.
+    """
+
+    prediction: float
+    probability: float
     
     
     
 # Define a POST endpoint for predicting loan eligibility based on user information.
-@app.post("/loan_eligibility")
-async def loan_eligibility(request: LoanEligibilityRequest):
+@app.post("/loan_eligibility", response_model=LoanEligibilityResponse)
+async def loan_eligibility(request: LoanEligibilityRequest) -> LoanEligibilityResponse:
     """
     Endpoint to predict loan eligibility based on user-provided information.
 
@@ -66,8 +91,8 @@ async def loan_eligibility(request: LoanEligibilityRequest):
 
     Returns
     -------
-    dict
-        A dictionary containing:
+    LoanEligibilityResponse
+        A response model containing:
         - `prediction`: A float value indicating loan eligibility (1.0 for eligible, 0.0 for non-eligible).
         - `probability`: A float value representing the probability of the loan eligibility prediction.
 
@@ -95,11 +120,11 @@ async def loan_eligibility(request: LoanEligibilityRequest):
             credit_history=credit_history
         )
         
-        # Prepare the response in a serializable format.
-        response = {
-            "prediction": float(prediction),
-            "probability": float(prediction_probability)
-        }
+        # Prepare the response using the validated response model.
+        response = LoanEligibilityResponse(
+            prediction=float(prediction),
+            probability=float(prediction_probability),
+        )
         
         # Return the result as a JSON response.
         return response
