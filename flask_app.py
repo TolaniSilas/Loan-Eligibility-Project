@@ -61,7 +61,8 @@ def get_loan_form():
         }
     
         # Call the model FastAPI Endpoint.
-        model_endpoint = "https://loan-eligibility-project-1.onrender.com/loan_eligibility" 
+        model_endpoint = "https://loan-eligibility-project-1.onrender.com/loan_eligibility" # "http://127.0.0.1:5000"
+        
         
         try:
             response = requests.post(model_endpoint, json=user_data)
