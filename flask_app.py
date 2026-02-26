@@ -39,6 +39,7 @@ def get_loan_form():
             applicant_income = float(user_info.get("applicantIncome"))
             coapplicant_income = float(user_info.get("coapplicantIncome"))
             loan_amount = float(user_info.get("loanAmount"))
+
         except ValueError:
             return jsonify({"error": "Applicant Income, Coapplicant Income, and Loan Amount must be valid numbers."}), 400
 
@@ -47,6 +48,7 @@ def get_loan_form():
             credit_history = float(user_info.get("creditHistory"))
             if credit_history not in (0, 1):
                 return jsonify({"error": "Credit history must be 0 or 1."}), 400
+
         except ValueError:
             return jsonify({"error": "Invalid credit history input!"}), 400
         
@@ -59,7 +61,7 @@ def get_loan_form():
         }
     
         # Call the model FastAPI Endpoint.
-        model_endpoint = "https://loan-eligibility-project-1.onrender.com/loan_eligibility"
+        model_endpoint = "https://loan-eligibility-project-1.onrender.com/loan_eligibility" 
         
         try:
             response = requests.post(model_endpoint, json=user_data)
@@ -71,6 +73,7 @@ def get_loan_form():
             return jsonify({"error": f"Error calling the model endpoint: {str(e)}"}), 500
     
         response = response.json()
+
         # Add the user's name to the response data.
         response["name"] = name 
         
@@ -99,6 +102,7 @@ def eligibility():
     # Determine eligibility status based on the prediction value.
     if prediction == 1:
         status = "Eligible"
+        
     else:
         status = "Non-eligible"
     
